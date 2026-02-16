@@ -258,30 +258,30 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid rgba(139,92,246,0.15);
-    padding: 8px 6px 12px 6px;
+    padding: 8px 12px calc(env(safe-area-inset-bottom, 8px) + 8px) 12px;
     gap: 0;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
   .bottom-nav::-webkit-scrollbar { display: none; }
   .bottom-nav-item {
     flex-shrink: 0;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     color: rgba(255,255,255,0.35);
     background: transparent;
-    border: 1.5px solid rgba(255,255,255,0.08);
+    border: 1.5px solid rgba(255,255,255,0.1);
     cursor: pointer;
     transition: all 0.3s ease;
-    margin: 0 2px;
+    margin: 0 3px;
   }
   .bottom-nav-item.active {
     color: #fff;
@@ -1310,7 +1310,12 @@ for (let i = 0; i < totalSlides; i++) {
 function scrollBottomNavToActive() {
   const activeItem = bottomNav.querySelector('.bottom-nav-item.active');
   if (activeItem) {
-    activeItem.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    const navRect = bottomNav.getBoundingClientRect();
+    const itemRect = activeItem.getBoundingClientRect();
+    // Only scroll if item is not fully visible
+    if (itemRect.left < navRect.left || itemRect.right > navRect.right) {
+      activeItem.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
   }
 }
 
@@ -1412,6 +1417,7 @@ document.addEventListener('touchend', (e) => {
 // Init first slide
 animateSlide(0);
 updateUI();
+bottomNav.scrollLeft = 0;
 </script>
 </body>
 </html>
